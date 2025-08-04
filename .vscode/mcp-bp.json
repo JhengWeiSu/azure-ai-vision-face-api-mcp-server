@@ -23,17 +23,40 @@
       "id": "azure-openai-endpoint",
       "description": "Please enter your Azure OpenAI Endpoint (optional).",
       "default": "your-azure-openai-endpoint"
+    },
+    {
+      "type": "promptString",
+      "id": "azure_storage_account",
+      "description": "Please enter your Azure Storage Account (optional)."
+    },
+    {
+      "type": "promptString",
+      "id": "azure_storage_container",
+      "description": "Please enter your Azure Storage Container (optional)."
+    },
+    {
+      "type": "promptString",
+      "id": "azure_storage_sas_token",
+      "description": "Please enter your Azure Storage SAS Token (optional).",
+      "password": true
     }
   ],
   "servers": {
     "azure_ai_vision_face_api_mcp_server": {
       "command": "uvx",
-      "args": ["--from", "git+https://github.com/Azure-Samples/azure-ai-vision-face-api-mcp-server", "azure-face-mcp"],
+      "args": [
+        "--from",
+        "git+https://github.com/Azure-Samples/azure-ai-vision-face-api-mcp-server",
+        "azure-face-mcp"
+      ],
       "env": {
-        "AZURE_FACE_ENDPOINT":"${input:azure-ai-face-api-endpoint}",
-        "AZURE_FACE_API_KEY":"${input:azure-ai-face-api-key}",
-        "AZURE_OPENAI_ENDPOINT":"${input:azure-openai-endpoint}",
-        "AZURE_OPENAI_API_KEY":"${input:azure-openai-api-key}"
+        "AZURE_FACE_ENDPOINT": "${input:azure-ai-face-api-endpoint}",
+        "AZURE_FACE_API_KEY": "${input:azure-ai-face-api-key}",
+        "AZURE_OPENAI_ENDPOINT": "${input:azure-openai-endpoint}",
+        "AZURE_OPENAI_API_KEY": "${input:azure-openai-api-key}",
+        "AZURE_STORAGE_ACCOUNT": "${input:azure_storage_account}",
+        "AZURE_STORAGE_CONTAINER": "${input:azure_storage_container}",
+        "AZURE_STORAGE_SAS_TOKEN": "${input:azure_storage_sas_token}"
       }
     }
   }

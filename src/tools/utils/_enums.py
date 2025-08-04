@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class CompareImagesConfig(str, Enum):
     TOOL_NAME = "azure_face_recognition_compare_two_images"
     TOOL_DESC = "Compare the similarity of faces in two images to determine if they belong to the same person. This function supports three comparison modes: 'largest_face', 'most_similar', and 'exhaustive'. YOU (MCP) must ask the user to choose one of these modes for each comparison with detailed explanation for each mode. YOU (MCP) must use the exact same explanation as following: 'largest_face' will compare only the largest face in both image, 'most_similar' will find the most similar face in the target image from each face in source image, and 'exhaustive' will compare all faces in both images."
@@ -43,6 +44,7 @@ class OpensetFaceAttribConfig(str, Enum):
     ARGS_IS_URL = "Whether the file_path is a remote file URL or a local file path. YOU (MCP) should set this to True if the file_path is a URL, otherwise set it to False."
     ERROR_AOAI_NOT_CONFIGURED = "The Azure OpenAI did not receive any image. To enable open-set face attribute detection, you need access to Azure OpenAI. Please check your .vscode/mcp.json configuration file and ensure the AZURE_OPENAI_ENDPOINT and AZURE_OPENAI_API_KEY are set correctly. After setting the environment variables, please restart the MCP server and try again."
 
+
 class AzureFaceAttribConfig(str, Enum):
     TOOL_NAME = "azure_face_detection_attribute"
     TOOL_DESC = "Detect and analyze the user provided images' attribute. Get all the face detection results from the face detection API. This function only supports the following face attribute: head pose, glasses, occlusion, blur, exposure, mask, quality, age, and landmarks. If the user potentially needs any other attribute which is not supported by this function, YOU (MCP) should call the 'azure_face_detection_openset_attribute' function after finishing this function."
@@ -57,3 +59,20 @@ class AzureFaceAttribConfig(str, Enum):
     ARGS_RETURN_QUALITY_FOR_RECOGNITION = "Whether to return quality for recognition information. Default is False. The information is The overall image quality regarding whether the image being used in the detection is of sufficient quality to attempt face recognition on. The value is an informal rating of low, medium, or high. Only 'high' quality images are recommended for person enrollment and quality at or above 'medium' is recommended for identification scenarios."
     ARGS_RETURN_AGE = "Whether to return age information. Default is False. The information is Age in years."
     ARGS_RETURN_LANDMARKS = "Whether to return Facial landmarks information. Default is False."
+
+
+class ListBlobFoldersConfig(str, Enum):
+    TOOL_NAME = "azure_blob_list_folders"
+    TOOL_DESC = "List all top-level folders (virtual directories) in the Azure Blob container and prompt the user to choose one for enrollment."
+    PROMPT_CHOOSE_FOLDER = (
+        "Available folders in the Azure Blob container:\n{folder_list}\n"
+        "Please reply with the exact folder name you want to use for enrollment. After you choose, I will download all images from that folder for you."
+    )
+
+
+class DownloadBlobFolderConfig(str, Enum):
+    TOOL_NAME = "azure_blob_download_folder"
+    TOOL_DESC = "Download all blobs (files) from the specified folder in the Azure Blob container to a local directory, preserving the same subfolder structure as in the storage."
+    ARGS_FOLDER_NAME = "The name of the folder (virtual directory) in the blob container."
+    ARGS_LOCAL_DIR = "The local directory where the files will be downloaded. Default is './downloaded_images'."
+    RESULT_SUCCESS = "Downloaded {num_files} files from folder '{folder_name}' to '{local_dir}'.\nFiles:\n{file_list}"
