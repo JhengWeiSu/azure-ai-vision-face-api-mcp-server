@@ -26,19 +26,22 @@
     },
     {
       "type": "promptString",
-      "id": "azure_storage_account",
-      "description": "Please enter your Azure Storage Account (optional)."
+      "id": "azure-storage-account",
+      "description": "Please enter your Azure Storage Account (optional).",
+      "default": "your-azure-storage-account"
     },
     {
       "type": "promptString",
-      "id": "azure_storage_container",
-      "description": "Please enter your Azure Storage Container (optional)."
+      "id": "azure-storage-container",
+      "description": "Please enter your Azure Storage Container (optional).",
+      "default": "your-azure-storage-container"
     },
     {
       "type": "promptString",
-      "id": "azure_storage_sas_token",
+      "id": "azure-storage-sas-token",
       "description": "Please enter your Azure Storage SAS Token (optional).",
-      "password": true
+      "password": true,
+      "default": "your-azure-storage-sas-token"
     }
   ],
   "servers": {
@@ -54,9 +57,9 @@
         "AZURE_FACE_API_KEY": "${input:azure-ai-face-api-key}",
         "AZURE_OPENAI_ENDPOINT": "${input:azure-openai-endpoint}",
         "AZURE_OPENAI_API_KEY": "${input:azure-openai-api-key}",
-        "AZURE_STORAGE_ACCOUNT": "${input:azure_storage_account}",
-        "AZURE_STORAGE_CONTAINER": "${input:azure_storage_container}",
-        "AZURE_STORAGE_SAS_TOKEN": "${input:azure_storage_sas_token}"
+        "AZURE_STORAGE_ACCOUNT": "${input:azure-storage-account}",
+        "AZURE_STORAGE_CONTAINER": "${input:azure-storage-container}",
+        "AZURE_STORAGE_SAS_TOKEN": "${input:azure-storage-sas-token}"
       }
     }
   }

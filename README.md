@@ -33,13 +33,14 @@ git clone https://github.com/Azure-Samples/azure-ai-vision-face-api-mcp-server.g
 - For more details about using , see the [Azure OpenAI documentation](https://learn.microsoft.com/en-us/azure/ai-foundry/openai/overview).
 
 #### 5. (Optional) Configure Azure Storage for Image Management
-- To access and process images, you can connect the MCP server to Azure Storage.
-- You will need to provide the following environment variables:
-  - `AZURE STORAGE ACCOUNT`: Your Azure Storage account name.
-  - `AZURE STORAGE CONTAINER`: The name of the container where images will be stored.
-  - `AZURE STORAGE SAS TOKEN`: The SAS token for accessing your storage container.
-- These variables can be set when prompted during the first server startup or in your environment configuration.
-- For more details, see the [Azure Storage documentation](https://learn.microsoft.com/en-us/azure/storage/common/storage-account-overview).
+- To enable image management and access, you need an Azure Storage account.
+- In the [Azure Portal](https://portal.azure.com/), create an Azure Storage resource and set up a container for your images.
+- Once created, obtain your **Storage Account Name**, **Container Name**, and a **SAS Token** for secure access.
+- You will be prompted to enter the following environment variables the first time you start the MCP server:
+  - `AZURE STORAGE ACCOUNT`: The name of your Azure Storage account.
+  - `AZURE STORAGE CONTAINER`: The name of your image container.
+  - `AZURE STORAGE SAS TOKEN`: The SAS token for your storage container.
+- For more details about using Azure Storage, see the [Azure Storage documentation](https://learn.microsoft.com/en-us/azure/storage/common/storage-account-overview).
 
 #### 6. Interact with our MCP tools using Visual Studio Code GitHub Copilot
 - Install [GitHub Copilot](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot) Visual Studio Code extension.
