@@ -32,7 +32,16 @@ git clone https://github.com/Azure-Samples/azure-ai-vision-face-api-mcp-server.g
   - `Azure OpenAI API Key`: The API key for your Azure OpenAI resource.
 - For more details about using , see the [Azure OpenAI documentation](https://learn.microsoft.com/en-us/azure/ai-foundry/openai/overview).
 
-#### 5. Interact with our MCP tools using Visual Studio Code GitHub Copilot
+#### 5. (Optional) Configure Azure Storage for Image Management
+- To access and process images, you can connect the MCP server to Azure Storage.
+- You will need to provide the following environment variables:
+  - `AZURE STORAGE ACCOUNT`: Your Azure Storage account name.
+  - `AZURE STORAGE CONTAINER`: The name of the container where images will be stored.
+  - `AZURE STORAGE SAS TOKEN`: The SAS token for accessing your storage container.
+- These variables can be set when prompted during the first server startup or in your environment configuration.
+- For more details, see the [Azure Storage documentation](https://learn.microsoft.com/en-us/azure/storage/common/storage-account-overview).
+
+#### 6. Interact with our MCP tools using Visual Studio Code GitHub Copilot
 - Install [GitHub Copilot](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot) Visual Studio Code extension.
 - Rename the file `.vscode/mcp-bp.json` to `.vscode/mcp.json` (or copy `.vscode/mcp-bp.json` to your existing `.vscode/mcp.json`) and press `Start` above the `azure_ai_vision_face_api_mcp_server` in `.vscode/mcp.json`.
 - Follow this [guide](https://code.visualstudio.com/docs/copilot/chat/mcp-servers#_add-an-mcp-server) to add our MCP tools in the workspace and [start a conversation with GitHub Copilot](https://code.visualstudio.com/docs/copilot/chat/mcp-servers#_use-mcp-tools-in-agent-mode) and use MCP tools in agent mode leveraging GPT-4.1.
