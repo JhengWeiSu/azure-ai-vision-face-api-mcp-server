@@ -2,7 +2,11 @@ import os
 
 from azure.storage.blob import ContainerClient
 
-from .utils._enums import ListBlobFoldersConfig, DownloadBlobFolderConfig
+from .utils._enums import (
+    ListBlobFoldersConfig,
+    ListPublicImageUrlsConfig,
+    DownloadBlobFolderConfig,
+)
 from typing import Annotated
 from pydantic import Field
 
@@ -33,6 +37,40 @@ def list_blob_folders_and_choose() -> str:
     return ListBlobFoldersConfig.PROMPT_CHOOSE_FOLDER.format(
         folder_list=folder_list_str
     )
+
+
+def list_public_image_urls(
+    folder_name: Annotated[
+        str, Field(description=ListPublicImageUrlsConfig.ARGS_FOLDER_NAME)
+    ],
+) -> list:
+    """
+    Returns a list of public URLs for all images in the specified folder in the Azure Blob container.
+    Assumes the container or blobs are publicly accessible or accessible via SAS token.
+    """
+    account = os.getenv("AZURE_STORAGE_ACCOUNT")
+    container = os.getenv("AZURE_STORAGE_CONTAINER")
+    sas_token = os.getenv("AZURE_STORAGE_SAS_TOKEN")
+
+    if not all([account, container, sas_token]):
+        return [
+            "Missing required environment variables: AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_CONTAINER, AZURE_STORAGE_SAS_TOKEN"
+        ]
+
+    account_url = f"https://{account}.blob.core.windows.net"
+    container_client = ContainerClient(
+        account_url, container_name=container, credential=sas_token
+    )
+
+    blobs = container_client.list_blobs(name_starts_with=folder_name + "/")
+    image_urls = []
+    for blob in blobs:
+        if blob.name.endswith("/"):
+            continue
+        # Construct the public URL (with SAS token if needed)
+        url = f"{account_url}/{container}/{blob.name}?{sas_token}"
+        image_urls.append(url)
+    return image_urls
 
 
 def download_blob_folder_from_container(

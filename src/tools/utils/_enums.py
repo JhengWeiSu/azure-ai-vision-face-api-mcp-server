@@ -70,6 +70,12 @@ class ListBlobFoldersConfig(str, Enum):
     )
 
 
+class ListPublicImageUrlsConfig(str, Enum):
+    TOOL_NAME = "azure_blob_list_public_image_urls"
+    TOOL_DESC = "List all public image URLs in the specified folder in the Azure Blob container."
+    ARGS_FOLDER_NAME = "The name of the folder (virtual directory) in the blob container."
+
+
 class DownloadBlobFolderConfig(str, Enum):
     TOOL_NAME = "azure_blob_download_folder"
     TOOL_DESC = "Download all blobs (files) from the specified folder in the Azure Blob container to a local directory, preserving the same subfolder structure as in the storage."

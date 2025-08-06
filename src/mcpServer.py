@@ -7,6 +7,7 @@ from tools.utils._enums import (
     OpensetFaceAttribConfig,
     AzureFaceAttribConfig,
     ListBlobFoldersConfig,
+    ListPublicImageUrlsConfig,
     DownloadBlobFolderConfig,
 )
 from tools.CompareImages import compare_source_image_to_target_image
@@ -17,6 +18,7 @@ from tools.OpensetFaceAttrib import get_face_openset_attrib
 from tools.AzureFaceAttrib import get_face_dect
 from tools.BlobFolderTools import (
     list_blob_folders_and_choose,
+    list_public_image_urls,
     download_blob_folder_from_container,
 )
 
@@ -58,6 +60,11 @@ class FaceMCPServer:
             name=ListBlobFoldersConfig.TOOL_NAME,
             description=ListBlobFoldersConfig.TOOL_DESC,
             fn=list_blob_folders_and_choose,
+        )
+        self.mcp.add_tool(
+            name=ListPublicImageUrlsConfig.TOOL_NAME,
+            description=ListPublicImageUrlsConfig.TOOL_DESC,
+            fn=list_public_image_urls,
         )
         self.mcp.add_tool(
             name=DownloadBlobFolderConfig.TOOL_NAME,
