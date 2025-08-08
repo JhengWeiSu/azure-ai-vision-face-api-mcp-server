@@ -1,6 +1,20 @@
 from importlib import import_module
-from typing import Any
-from .prompt_parser import parse_prompt_for_detect, ParsedDetect
+from typing import Any, Callable
+from .prompt_parser import (
+    ParsedDetect,
+    parse_prompt_for_detect,
+    ParsedCompare,
+    parse_prompt_for_compare,
+)
+
+
+def _load_func(module_path: str, func_name: str) -> Callable[..., Any] | None:
+    try:
+        mod = import_module(module_path)
+        fn = getattr(mod, func_name, None)
+        return fn if callable(fn) else None
+    except Exception:
+        return None
 
 
 def dispatch_prompt_detect(prompt: str) -> Any:
@@ -10,8 +24,7 @@ def dispatch_prompt_detect(prompt: str) -> Any:
     """
     intent: ParsedDetect = parse_prompt_for_detect(prompt)
 
-    mod = import_module("tools.AzureFaceAttrib")
-    fn = getattr(mod, "get_face_dect")
+    fn = _load_func("tools.AzureFaceAttrib", "get_face_dect")
 
     return fn(
         file_path=intent.file_path,
@@ -25,4 +38,18 @@ def dispatch_prompt_detect(prompt: str) -> Any:
         return_QUALITY_FOR_RECOGNITION=intent.return_QUALITY_FOR_RECOGNITION,
         return_AGE=intent.return_AGE,
         return_landmarks=intent.return_landmarks,
+    )
+
+
+def dispatch_prompt_compare(prompt: str) -> Any:
+    intent: ParsedCompare = parse_prompt_for_compare(prompt)
+    fn = _load_func("tools.CompareImages", "compare_source_image_to_target_image")
+    print(f"Dispatching compare with: {intent}")
+    return fn(
+        source_image=intent.left,
+        target_image=intent.right,
+        comparison_mode="most_similar",
+        is_source_image_url=intent.left_is_url,
+        is_target_image_url=intent.right_is_url,
+        identical_threshold=0.5,
     )
