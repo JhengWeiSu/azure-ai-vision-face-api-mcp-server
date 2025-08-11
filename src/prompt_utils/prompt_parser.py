@@ -98,9 +98,57 @@ def parse_prompt_for_compare(prompt: str) -> ParsedCompare:
     )
 
 
+@dataclass
+class ParsedEnroll:
+    file_path_list: list  # list of local paths or URLs
+    person_name: str
+    group_uuid: str
+    is_url: bool = False
+    check_quality: bool = True
+
+
+_ENROLL_RE = re.compile(
+    rf"""
+    \benroll\s+(?:the\s+)?face[s]?\s+in\s+
+    (?P<file>{_LOCAL_IMG_RE}|{_URL_RE}(?:\s*,\s*{_LOCAL_IMG_RE}|{_URL_RE})*)
+    \s+to\s+(?:the\s+)?person\s+group\s+['"]?(?P<group>[\w\-]+)['"]?
+    \s+as\s+['"]?(?P<person>[\w\-]+)['"]?
+    """,
+    re.IGNORECASE | re.VERBOSE,
+)
+
+
+def parse_prompt_for_enroll(prompt: str) -> ParsedEnroll:
+    """
+    Parse prompts like:
+      'Enroll the face in detection1.jpg to the person group "test-group" as "test-person"'
+      'Enroll the face in https://.../detection1.jpg to the person group test-group as test-person'
+      'Enroll the faces in img1.jpg, img2.jpg to the person group test-group as test-person'
+    """
+    p = prompt.strip()
+    m = _ENROLL_RE.search(p)
+    if not m:
+        raise ValueError("Unrecognized enroll prompt format")
+    file_str = m.group("file")
+    # Split by comma and strip whitespace
+    file_path_list = [f.strip() for f in re.split(r",\s*", file_str)]
+    is_url = all(re.fullmatch(_URL_RE, f, re.IGNORECASE) for f in file_path_list)
+    person_name = m.group("person")
+    group_uuid = m.group("group")
+    return ParsedEnroll(
+        file_path_list=file_path_list,
+        person_name=person_name,
+        group_uuid=group_uuid,
+        is_url=is_url,
+        check_quality=True,
+    )
+
+
 __all__ = [
     "ParsedDetect",
     "parse_prompt_for_detect",
     "ParsedCompare",
     "parse_prompt_for_compare",
+    "ParsedEnroll",
+    "parse_prompt_for_enroll",
 ]

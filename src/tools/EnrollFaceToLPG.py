@@ -108,22 +108,36 @@ def enroll_face_to_group(
                 )
                 detected_face = filtered_faces[largest_face_index]
                 output_list.append(
-                    f"Image file: {file_path} contains more than 1 face for recognition. Seletecting the largest face."
+                    f"Image file: {file_path} contains more than 1 face for recognition. Selecting the largest face."
                     f" Face ID: {detected_face.face_id} "
                     f"(bounding box: {detected_face.face_rectangle})."
                 )
-            face_admin_client.large_person_group.add_face(
-                large_person_group_id=UUID,
-                person_id=new_person.person_id,
-                image_content=open(file_path, "rb"),
-                target_face=[
-                    detected_face.face_rectangle.left,
-                    detected_face.face_rectangle.top,
-                    detected_face.face_rectangle.width,
-                    detected_face.face_rectangle.height
-                ],
-                detection_model=FaceDetectionModel.DETECTION03,
-            )
+            if is_url:
+                face_admin_client.large_person_group.add_face_from_url(
+                    large_person_group_id=UUID,
+                    person_id=new_person.person_id,
+                    url=file_path,
+                    target_face=[
+                        detected_face.face_rectangle.left,
+                        detected_face.face_rectangle.top,
+                        detected_face.face_rectangle.width,
+                        detected_face.face_rectangle.height,
+                    ],
+                    detection_model=FaceDetectionModel.DETECTION03,
+                )
+            else:
+                face_admin_client.large_person_group.add_face(
+                    large_person_group_id=UUID,
+                    person_id=new_person.person_id,
+                    image_content=open(file_path, "rb"),
+                    target_face=[
+                        detected_face.face_rectangle.left,
+                        detected_face.face_rectangle.top,
+                        detected_face.face_rectangle.width,
+                        detected_face.face_rectangle.height,
+                    ],
+                    detection_model=FaceDetectionModel.DETECTION03,
+                )
             output_list.append(
                 f"Add image file: {file_path} to person name: {person_name} "
                 f"with person id: {new_person.person_id} in the group with "

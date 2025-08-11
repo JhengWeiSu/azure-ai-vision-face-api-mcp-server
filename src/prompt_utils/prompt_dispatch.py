@@ -5,6 +5,8 @@ from .prompt_parser import (
     parse_prompt_for_detect,
     ParsedCompare,
     parse_prompt_for_compare,
+    ParsedEnroll,
+    parse_prompt_for_enroll,
 )
 
 
@@ -52,4 +54,20 @@ def dispatch_prompt_compare(prompt: str) -> Any:
         is_source_image_url=intent.left_is_url,
         is_target_image_url=intent.right_is_url,
         identical_threshold=0.5,
+    )
+
+
+def dispatch_prompt_enroll(prompt: str) -> Any:
+    """
+    Parse the prompt and call tools.EnrollFaceToLPG.enroll_face_to_group(...)
+    with the exact kwargs expected by that function.
+    """
+    intent: ParsedEnroll = parse_prompt_for_enroll(prompt)
+    fn = _load_func("tools.EnrollFaceToLPG", "enroll_face_to_group")
+    return fn(
+        file_path_list=intent.file_path_list,
+        person_name=intent.person_name,
+        group_uuid=intent.group_uuid,
+        is_url=intent.is_url,
+        check_quality=intent.check_quality,
     )
