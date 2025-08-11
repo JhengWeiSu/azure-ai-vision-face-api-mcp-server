@@ -40,7 +40,7 @@ def _find_file_upwards(filename: str, start: pathlib.Path) -> pathlib.Path | Non
 
 
 @LIVE
-def test_live_detect_mask_or_glasses_from_prompt(monkeypatch):
+def test_live_detect_mask_or_glasses_from_prompt_local(monkeypatch):
     prompt = "Check all the faces inside detection1.jpg wearing the mask or glasses"
 
     repo_root = pathlib.Path(__file__).resolve().parents[1]
@@ -88,3 +88,44 @@ def test_live_detect_mask_or_glasses_from_prompt(monkeypatch):
     # Optional debug print (use pytest -s to see it)
     print("Glasses:", attrs["glasses"])
     print("Mask:", attrs["mask"])
+
+
+def test_live_detect_mask_or_glasses_from_prompt_url(monkeypatch):
+    # Use a public image URL with faces, mask or glasses for testing
+    image_url = "https://raw.githubusercontent.com/Azure-Samples/cognitive-services-sample-data-files/master/Face/images/detection1.jpg"
+    prompt = f"Check all the faces inside {image_url} wearing the mask or glasses"
+
+    result_raw = dispatch_prompt_detect(prompt)
+
+    pprint(result_raw)
+
+
+"""
+    if isinstance(result_raw, tuple):
+        result_str = "".join(result_raw)
+    else:
+        result_str = str(result_raw)
+
+    assert "Azure AI Face API Detection Results" in result_str
+
+    colon_index = result_str.find(":")
+    assert colon_index != -1, "No ':' found in result string"
+    dict_str = result_str[colon_index + 1 :].strip()
+
+    try:
+        result_dict = ast.literal_eval(dict_str)
+    except Exception as e:
+        pytest.fail(f"Could not parse result into dict: {e}\nRaw string:\n{dict_str}")
+
+    assert isinstance(result_dict, dict), f"Expected dict, got {type(result_dict)}"
+    assert "faceId" in result_dict, "faceId missing"
+    assert "faceRectangle" in result_dict, "faceRectangle missing"
+    assert "faceAttributes" in result_dict, "faceAttributes missing"
+
+    attrs = result_dict["faceAttributes"]
+    assert "glasses" in attrs, "'glasses' missing in faceAttributes"
+    assert "mask" in attrs, "'mask' missing in faceAttributes"
+
+    print("Glasses:", attrs["glasses"])
+    print("Mask:", attrs["mask"])
+"""

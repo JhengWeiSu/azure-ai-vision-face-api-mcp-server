@@ -26,13 +26,15 @@ class ParsedDetect:
 
 def parse_prompt_for_detect(prompt: str) -> ParsedDetect:
     """
-    Only handles: 'Check all the faces inside detection1.jpg wearing the mask or glasses'
+    Handles prompts like:
+        'Check all the faces inside detection1.jpg wearing the mask or glasses'
+        'Check all the faces inside https://.../detection1.jpg wearing the mask or glasses'
     """
     p = prompt.strip()
-    m_local = re.search(r"inside\s+([^\s]+?\.(?:jpg|jpeg|png))", p, re.IGNORECASE)
-    m_url = re.search(r"(https?://\S+?\.(?:jpg|jpeg|png))", p, re.IGNORECASE)
+    m_url = re.search(_URL_RE, p, re.IGNORECASE)
+    m_local = None if m_url else re.search(_LOCAL_IMG_RE, p, re.IGNORECASE)
 
-    if not (m_local or m_url):
+    if not (m_url or m_local):
         raise ValueError("Could not find image path or URL in prompt.")
 
     has_mask = "mask" in p.lower()
