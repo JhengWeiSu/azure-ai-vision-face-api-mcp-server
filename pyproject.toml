@@ -11,7 +11,12 @@ dependencies = [
     "fastmcp>=2.10.5",
     "openai>=1.97.0",
     "opencv-python>=4.12.0.88",
-    "azure-storage-blob>=12.26.0"
+    "azure-storage-blob>=12.26.0",
+    "pytest>=8.4.1"
 ]
+
+[tool.uv]
+package = true
+
 [project.scripts]
 azure-face-mcp = "mcpServer:run_server"

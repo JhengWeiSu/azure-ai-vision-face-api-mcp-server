@@ -63,10 +63,15 @@ class AzureFaceAttribConfig(str, Enum):
 
 class ListBlobFoldersConfig(str, Enum):
     TOOL_NAME = "azure_blob_list_folders"
-    TOOL_DESC = "List all top-level folders (virtual directories) in the Azure Blob container and prompt the user to choose one for enrollment."
+    TOOL_DESC = (
+        "List all person folders (virtual directories) in the Azure Blob container and prompt the user to choose one or more folders for enrollment. "
+        "Each folder should contain face images for a single person, and the folder name should be the person's name or identifying information. "
+        "After selection, images will be downloaded or their URLs will be used for further processing."
+    )
     PROMPT_CHOOSE_FOLDER = (
         "Available folders in the Azure Blob container:\n{folder_list}\n"
-        "Please reply with the exact folder name you want to use for enrollment. After you choose, I will download all images from that folder for you."
+        "Please reply with a list of folder names you want to use for enrollment. Each folder should contain face images for a single person, and the folder name should be the person's name or info. "
+        "After you choose, I will download all images from those folders or use their URLs for further processing."
     )
 
 
