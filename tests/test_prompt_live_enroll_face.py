@@ -8,6 +8,7 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "src"))
 
 from prompt_utils.prompt_dispatch import dispatch_prompt_enroll
 from tools.CreateLPG import create_large_person_group
+from tools.ListPersonsInLPG import list_persons_in_group
 
 endpoint = os.getenv("AZURE_FACE_ENDPOINT")
 key = os.getenv("AZURE_FACE_API_KEY")
@@ -75,3 +76,17 @@ def test_live_enroll_face_from_url(monkeypatch):
     result_str = str(result_raw)
     assert "Create the person name:" in result_str
     assert "Add image file:" in result_str
+
+
+@LIVE
+def test_live_list_persons_in_group(monkeypatch):
+    group_id = "test-group-list"
+    create_large_person_group(group_id)
+    image_url = "https://raw.githubusercontent.com/Azure-Samples/cognitive-services-sample-data-files/master/Face/images/detection1.jpg"
+    enroll_prompt = f"Enroll the face in {image_url} to the person group '{group_id}' as 'test-person-list'"
+    dispatch_prompt_enroll(enroll_prompt)
+
+    persons = list_persons_in_group(group_id)
+    result_str = str(persons)
+    assert "Name: test-person-list" in result_str
+    assert "Number of faces: 1" in result_str

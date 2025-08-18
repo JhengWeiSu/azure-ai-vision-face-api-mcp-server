@@ -35,6 +35,12 @@ class IdentifyFaceInLPGConfig(str, Enum):
     ARGS_IS_URL = "Whether the file_path is a remote file URL or a local file path. YOU (MCP) should set this to True if the file_path is a URL, otherwise set it to False."
 
 
+class ListPersonsInLPGConfig(str, Enum):
+    TOOL_NAME = "azure_face_recognition_list_persons"
+    TOOL_DESC = "List all persons and number of faces per person in a specific large person group."
+    ARGS_GROUP_UUID = "The UUID of the person group to list persons and face counts."
+
+
 class OpensetFaceAttribConfig(str, Enum):
     TOOL_NAME = "azure_face_detection_openset_attribute"
     TOOL_DESC = "Get the face attribute from the user provided images. This function supports all the possible face or image attributes but excludes the attributes closely related to the following: head pose, glasses, occlusion, blur, exposure, mask, quality, age, and landmarks. This function could be used separately or after the 'azure_face_detection_attribute' function if the user potentially needs any other attribute which is not supported by the 'azure_face_detection_attribute' function. YOU (MCP) must return the error message if the Azure OpenAI configuration file is not set correctly or the image file is not provided."
