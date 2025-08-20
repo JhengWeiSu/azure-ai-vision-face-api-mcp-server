@@ -6,6 +6,7 @@ from tools.utils._enums import (
     IdentifyFaceInLPGConfig,
     ListPersonsInLPGConfig,
     DeletePersonFromLPGConfig,
+    DeleteFaceFromLPGConfig,
     OpensetFaceAttribConfig,
     AzureFaceAttribConfig,
     ListBlobFoldersConfig,
@@ -17,7 +18,7 @@ from tools.CreateLPG import create_large_person_group
 from tools.EnrollFaceToLPG import enroll_face_to_group
 from tools.IdentifyFaceInLPG import identify_face_from_group
 from tools.ListPersonsInLPG import list_persons_in_group
-from tools.DeletePersonFromLPG import delete_person_from_group
+from tools.DeleteFromLPG import delete_person_from_group, delete_face_from_group
 from tools.OpensetFaceAttrib import get_face_openset_attrib
 from tools.AzureFaceAttrib import get_face_dect
 from tools.BlobFolderTools import (
@@ -59,6 +60,11 @@ class FaceMCPServer:
             name=DeletePersonFromLPGConfig.TOOL_NAME,
             description=DeletePersonFromLPGConfig.TOOL_DESC,
             fn=delete_person_from_group,
+        )
+        self.mcp.add_tool(
+            name=DeleteFaceFromLPGConfig.TOOL_NAME,
+            description=DeleteFaceFromLPGConfig.TOOL_DESC,
+            fn=delete_face_from_group,
         )
         self.mcp.add_tool(
             name=OpensetFaceAttribConfig.TOOL_NAME,

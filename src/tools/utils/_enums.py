@@ -52,6 +52,14 @@ class DeletePersonFromLPGConfig(str, Enum):
     ARGS_GROUP_UUID = "The UUID of the person group from which to delete the person."
 
 
+class DeleteFaceFromLPGConfig(str, Enum):
+    TOOL_NAME = "azure_face_recognition_delete_face"
+    TOOL_DESC = "Delete a face from a specific person in a large person group leveraging the azure ai face recognition API."
+    ARGS_FACE_ID = "The ID of the face to delete."
+    ARGS_PERSON_ID = "The ID of the person from which to delete the face."
+    ARGS_GROUP_UUID = "The UUID of the person group from which to delete the face."
+
+
 class OpensetFaceAttribConfig(str, Enum):
     TOOL_NAME = "azure_face_detection_openset_attribute"
     TOOL_DESC = "Get the face attribute from the user provided images. This function supports all the possible face or image attributes but excludes the attributes closely related to the following: head pose, glasses, occlusion, blur, exposure, mask, quality, age, and landmarks. This function could be used separately or after the 'azure_face_detection_attribute' function if the user potentially needs any other attribute which is not supported by the 'azure_face_detection_attribute' function. YOU (MCP) must return the error message if the Azure OpenAI configuration file is not set correctly or the image file is not provided."
