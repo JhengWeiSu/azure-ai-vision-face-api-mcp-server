@@ -55,7 +55,7 @@ class DeletePersonFromLPGConfig(str, Enum):
 class DeleteFaceFromLPGConfig(str, Enum):
     TOOL_NAME = "azure_face_recognition_delete_face"
     TOOL_DESC = "Delete a face from a specific person in a large person group leveraging the azure ai face recognition API."
-    ARGS_FACE_ID = "The ID of the face to delete."
+    ARGS_FACE_ID = "The persisted face ID of the face to delete."
     ARGS_PERSON_ID = "The ID of the person from which to delete the face."
     ARGS_GROUP_UUID = "The UUID of the person group from which to delete the face."
 
