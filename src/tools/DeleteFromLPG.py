@@ -13,7 +13,19 @@ def delete_person_from_group(
     group_uuid: Annotated[
         str, Field(description=DeletePersonFromLPGConfig.ARGS_GROUP_UUID)
     ],
+    confirm: Annotated[
+        bool,
+        Field(
+            description="Set to true to actually delete. Defaults to false for safety."
+        ),
+    ] = False,
 ):
+    if not confirm:
+        return {
+            "message": DeletePersonFromLPGConfig.DOUBLE_CONFIRM_WARNING.format(
+                person_id=person_id
+            )
+        }
     ENDPOINT = os.getenv("AZURE_FACE_ENDPOINT")
     KEY = os.getenv("AZURE_FACE_API_KEY")
     UUID = group_uuid
@@ -43,7 +55,19 @@ def delete_face_from_group(
     group_uuid: Annotated[
         str, Field(description=DeleteFaceFromLPGConfig.ARGS_GROUP_UUID)
     ],
+    confirm: Annotated[
+        bool,
+        Field(
+            description="Set to true to actually delete. Defaults to false for safety."
+        ),
+    ] = False,
 ):
+    if not confirm:
+        return {
+            "message": DeleteFaceFromLPGConfig.DOUBLE_CONFIRM_WARNING.format(
+                face_id=face_id, person_id=person_id
+            )
+        }
     ENDPOINT = os.getenv("AZURE_FACE_ENDPOINT")
     KEY = os.getenv("AZURE_FACE_API_KEY")
     UUID = group_uuid

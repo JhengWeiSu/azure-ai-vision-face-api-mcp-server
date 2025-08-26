@@ -104,7 +104,7 @@ def test_live_delete_person_from_group(monkeypatch):
     match = re.search(r"person id: ([a-f0-9\-]{36})", str(result_raw))
     assert match is not None, "Person ID not found in result"
     person_id = match.group(1)
-    delete_result = delete_person_from_group(person_id, group_id)
+    delete_result = delete_person_from_group(person_id, group_id, confirm=True)
     assert f"Deleted person with ID: {person_id}" in str(delete_result)
 
 
@@ -125,5 +125,5 @@ def test_live_delete_face_from_group(monkeypatch):
     assert match_face is not None, "Persisted Face ID not found in result"
     face_id = match_face.group(1)
 
-    delete_result = delete_face_from_group(face_id, person_id, group_id)
+    delete_result = delete_face_from_group(face_id, person_id, group_id, confirm=True)
     assert f"Deleted face with ID: {face_id}" in str(delete_result)

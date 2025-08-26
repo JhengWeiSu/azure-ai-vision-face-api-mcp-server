@@ -10,7 +10,20 @@ from .utils._enums import DeleteLPGConfig
 
 def delete_large_person_group(
     group_uuid: Annotated[str, Field(description=DeleteLPGConfig.ARGS_GROUP_UUID)],
+    confirm: Annotated[
+        bool,
+        Field(
+            description="Set to true to actually delete. Defaults to false for safety."
+        ),
+    ] = False,
 ):
+    if not confirm:
+        return {
+            "message": DeleteLPGConfig.DOUBLE_CONFIRM_WARNING.format(
+                group_uuid=group_uuid
+            )
+        }
+
     ENDPOINT = os.getenv("AZURE_FACE_ENDPOINT")
     KEY = os.getenv("AZURE_FACE_API_KEY")
 
