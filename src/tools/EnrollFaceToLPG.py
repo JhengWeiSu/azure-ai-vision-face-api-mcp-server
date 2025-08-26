@@ -1,5 +1,6 @@
 import os
 from typing import Annotated
+import json
 
 from azure.ai.vision.face import FaceAdministrationClient, FaceClient
 from azure.ai.vision.face.models import (
@@ -139,6 +140,7 @@ def enroll_face_to_group(
                         detected_face.face_rectangle.height,
                     ],
                     detection_model=FaceDetectionModel.DETECTION03,
+                    user_data=json.dumps({"file_path": file_path.split("?")[0]}),
                 )
             else:
                 persisted_face = face_admin_client.large_person_group.add_face(
@@ -152,6 +154,7 @@ def enroll_face_to_group(
                         detected_face.face_rectangle.height,
                     ],
                     detection_model=FaceDetectionModel.DETECTION03,
+                    user_data=json.dumps({"file_path": file_path}),
                 )
             output_list.append(
                 f"Add image file: {file_path} to person name: {person_name} "
