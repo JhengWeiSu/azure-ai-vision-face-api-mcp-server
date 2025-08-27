@@ -10,12 +10,7 @@ from .utils._enums import DeleteLPGConfig
 
 def delete_large_person_group(
     group_uuid: Annotated[str, Field(description=DeleteLPGConfig.ARGS_GROUP_UUID)],
-    confirm: Annotated[
-        bool,
-        Field(
-            description="Set to true to actually delete. Defaults to false for safety."
-        ),
-    ] = False,
+    confirm: Annotated[bool, Field(description=DeleteLPGConfig.ARGS_CONFIRM)] = False,
 ):
     if not confirm:
         return {
