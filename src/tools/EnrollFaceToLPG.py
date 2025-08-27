@@ -1,6 +1,7 @@
 import os
 from typing import Annotated
 import json
+import requests
 
 from azure.ai.vision.face import FaceAdministrationClient, FaceClient
 from azure.ai.vision.face.models import (
@@ -59,7 +60,30 @@ def enroll_face_to_group(
             f" in the large person group with group UUID: {UUID}"
         )
         for file_path in file_path_list:
-            if is_url is True:
+            if is_url:
+                response = requests.head(file_path)
+                if response.status_code != 200:
+                    token = os.getenv("AZURE_STORAGE_SAS_TOKEN")
+                    if token:
+                        sep = "&" if "?" in file_path else "?"
+                        file_path_with_token = f"{file_path}{sep}{token}"
+                        response = requests.head(file_path_with_token)
+                        if response.status_code == 200:
+                            output_list.append(
+                                f"URL: {file_path_with_token} is reachable after adding SAS token."
+                            )
+                            file_path = file_path_with_token
+                        else:
+                            output_list.append(
+                                f"URL: {file_path_with_token} is not reachable even after adding SAS token. Ignoring this image."
+                            )
+                            continue
+                    else:
+                        output_list.append(
+                            f"URL: {file_path} is not reachable and no SAS token is available. Ignoring this image."
+                        )
+                        continue
+
                 detected_faces = face_client.detect_from_url(
                     url=file_path,
                     detection_model=FaceDetectionModel.DETECTION03,
