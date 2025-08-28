@@ -7,7 +7,7 @@ from .utils._enums import (
     ListPublicImageUrlsConfig,
     DownloadBlobFolderConfig,
 )
-from typing import Annotated
+from typing import Annotated, Dict, List
 from pydantic import Field
 
 
@@ -43,10 +43,13 @@ def list_public_image_urls(
     folder_name: Annotated[
         str, Field(description=ListPublicImageUrlsConfig.ARGS_FOLDER_NAME)
     ],
-) -> list:
+) -> Dict[str, List[dict] | str]:
     """
-    Returns a list of public URLs for all images in the specified folder in the Azure Blob container.
-    Assumes the container or blobs are publicly accessible or accessible via SAS token.
+    Return FULL, shareable image URLs under `folder_name`, **always with SAS token appended**.
+
+    Assistant instructions:
+    - Show these URLs **verbatim** to the user (do not mask/shorten/remove query params).
+    - Prefer code formatting so UIs don't truncate the query string.
     """
     account = os.getenv("AZURE_STORAGE_ACCOUNT")
     container = os.getenv("AZURE_STORAGE_CONTAINER")
@@ -63,14 +66,15 @@ def list_public_image_urls(
     )
 
     blobs = container_client.list_blobs(name_starts_with=folder_name + "/")
-    image_urls = []
+    items: List[dict] = []
     for blob in blobs:
         if blob.name.endswith("/"):
             continue
         # Construct the public URL (with SAS token if needed)
         url = f"{account_url}/{container}/{blob.name}?{sas_token}"
-        image_urls.append(url)
-    return image_urls
+        entry = {"name": blob.name, "url_with_token": url}
+        items.append(entry)
+    return {"items": items, "urls_txt": "\n".join(i["url_with_token"] for i in items)}
 
 
 def download_blob_folder_from_container(
