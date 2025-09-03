@@ -7,11 +7,23 @@ from pydantic import Field
 
 from .utils._enums import DeleteLPGConfig
 
+_LAST_WARNING: dict[str, bool] = {}
+
 
 def delete_large_person_group(
     group_uuid: Annotated[str, Field(description=DeleteLPGConfig.ARGS_GROUP_UUID)],
     confirm: Annotated[bool, Field(description=DeleteLPGConfig.ARGS_CONFIRM)] = False,
 ):
+    if not _LAST_WARNING.get(group_uuid):
+        _LAST_WARNING[group_uuid] = True
+        return {
+            "status": "needs_confirmation",
+            "message": DeleteLPGConfig.DOUBLE_CONFIRM_WARNING.format(
+                group_uuid=group_uuid
+            )
+            + " Call again with user confirmation.",
+        }
+
     if not confirm:
         return {
             "message": DeleteLPGConfig.DOUBLE_CONFIRM_WARNING.format(

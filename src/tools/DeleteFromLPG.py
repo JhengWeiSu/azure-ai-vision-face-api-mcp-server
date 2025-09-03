@@ -7,6 +7,8 @@ from pydantic import Field
 
 from .utils._enums import DeletePersonFromLPGConfig, DeleteFaceFromLPGConfig
 
+_LAST_WARNING: dict[str, bool] = {}
+
 
 def delete_person_from_group(
     person_id: Annotated[str, Field(DeletePersonFromLPGConfig.ARGS_PERSON_ID)],
@@ -17,6 +19,16 @@ def delete_person_from_group(
         bool, Field(description=DeletePersonFromLPGConfig.ARGS_CONFIRM)
     ] = False,
 ):
+    if not _LAST_WARNING.get(f"{group_uuid}:{person_id}"):
+        _LAST_WARNING[f"{group_uuid}:{person_id}"] = True
+        return {
+            "status": "needs_confirmation",
+            "message": DeletePersonFromLPGConfig.DOUBLE_CONFIRM_WARNING.format(
+                person_id=person_id, group_uuid=group_uuid
+            )
+            + " Call again with user confirmation.",
+        }
+
     if not confirm:
         return {
             "message": DeletePersonFromLPGConfig.DOUBLE_CONFIRM_WARNING.format(
@@ -55,6 +67,16 @@ def delete_face_from_group(
         bool, Field(description=DeleteFaceFromLPGConfig.ARGS_CONFIRM)
     ] = False,
 ):
+    if not _LAST_WARNING.get(f"{group_uuid}:{person_id}:{face_id}"):
+        _LAST_WARNING[f"{group_uuid}:{person_id}:{face_id}"] = True
+        return {
+            "status": "needs_confirmation",
+            "message": DeleteFaceFromLPGConfig.DOUBLE_CONFIRM_WARNING.format(
+                face_id=face_id, person_id=person_id, group_uuid=group_uuid
+            )
+            + " Call again with user confirmation.",
+        }
+
     if not confirm:
         return {
             "message": DeleteFaceFromLPGConfig.DOUBLE_CONFIRM_WARNING.format(

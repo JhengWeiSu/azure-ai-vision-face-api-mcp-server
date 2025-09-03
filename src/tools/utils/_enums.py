@@ -53,7 +53,7 @@ class DeletePersonFromLPGConfig(str, Enum):
     ARGS_CONFIRM = "Set to true to actually delete. Defaults to false for safety."
     DOUBLE_CONFIRM_WARNING = (
         "This will delete person (ID: {person_id}) from large person group (Group ID: {group_uuid}). "
-        "Double confirm by calling again with confirm=True to proceed."
+        "Double confirm by calling again to proceed."
     )
 
 
@@ -66,7 +66,7 @@ class DeleteFaceFromLPGConfig(str, Enum):
     ARGS_CONFIRM = "Set to true to actually delete. Defaults to false for safety."
     DOUBLE_CONFIRM_WARNING = (
         "This will permanently delete the face (Face ID: {face_id}) from person (Person ID: {person_id}) in the large person group (Group ID: {group_uuid}). "
-        "Double confirm by calling again with confirm=True to proceed."
+        "Double confirm by calling again to proceed."
     )
 
 
@@ -77,7 +77,7 @@ class DeleteLPGConfig(str, Enum):
     ARGS_CONFIRM = "Set to true to actually delete. Defaults to false for safety."
     DOUBLE_CONFIRM_WARNING = (
         "This will delete the large person Group (Group ID: {group_uuid}). "
-        "Double confirm by calling again with confirm=True to proceed."
+        "Double confirm by calling again to proceed."
     )
 
 
