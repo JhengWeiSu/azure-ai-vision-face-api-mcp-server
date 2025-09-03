@@ -7,29 +7,39 @@ from pydantic import Field
 
 from .utils._enums import DeleteLPGConfig
 
-_LAST_WARNING: dict[str, bool] = {}
+# In-memory map to track if a group needs confirmation
+_PENDING_DELETES = {}
+
+# Word the user must type to confirm
+_CONFIRM_WORD = "YES_DELETE"
 
 
 def delete_large_person_group(
     group_uuid: Annotated[str, Field(description=DeleteLPGConfig.ARGS_GROUP_UUID)],
-    confirm: Annotated[bool, Field(description=DeleteLPGConfig.ARGS_CONFIRM)] = False,
+    confirm_text: Annotated[
+        str, Field(description=f"Type exactly '{_CONFIRM_WORD}' to confirm deletion")
+    ] = "",
 ):
-    if not _LAST_WARNING.get(group_uuid):
-        _LAST_WARNING[group_uuid] = True
+    # First call: warn and require explicit confirm word
+    if _PENDING_DELETES.get(group_uuid) is None:
+        _PENDING_DELETES[group_uuid] = True
         return {
             "status": "needs_confirmation",
             "message": DeleteLPGConfig.DOUBLE_CONFIRM_WARNING.format(
                 group_uuid=group_uuid
             )
-            + " Call again with user confirmation.",
+            + f" To proceed, call again with confirm_text='{_CONFIRM_WORD}'.",
         }
 
-    if not confirm:
+    # Second call: must match confirm word exactly
+    if confirm_text != _CONFIRM_WORD:
         return {
-            "message": DeleteLPGConfig.DOUBLE_CONFIRM_WARNING.format(
-                group_uuid=group_uuid
-            )
+            "status": "confirmation_required",
+            "message": f"You must type confirm_text='{_CONFIRM_WORD}' to delete group {group_uuid}.",
         }
+
+    # Passed confirmation → perform deletion
+    _PENDING_DELETES.pop(group_uuid, None)
 
     ENDPOINT = os.getenv("AZURE_FACE_ENDPOINT")
     KEY = os.getenv("AZURE_FACE_API_KEY")

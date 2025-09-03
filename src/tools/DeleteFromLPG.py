@@ -7,7 +7,11 @@ from pydantic import Field
 
 from .utils._enums import DeletePersonFromLPGConfig, DeleteFaceFromLPGConfig
 
-_LAST_WARNING: dict[str, bool] = {}
+# Keep pending confirmations here
+_PENDING_DELETES: dict[str, bool] = {}
+
+# Word the user must type to confirm
+_CONFIRM_WORD = "YES_DELETE"
 
 
 def delete_person_from_group(
@@ -15,29 +19,37 @@ def delete_person_from_group(
     group_uuid: Annotated[
         str, Field(description=DeletePersonFromLPGConfig.ARGS_GROUP_UUID)
     ],
-    confirm: Annotated[
-        bool, Field(description=DeletePersonFromLPGConfig.ARGS_CONFIRM)
-    ] = False,
+    confirm_text: Annotated[
+        str, Field(description=f"Type exactly '{_CONFIRM_WORD}' to confirm deletion")
+    ] = "",
 ):
-    if not _LAST_WARNING.get(f"{group_uuid}:{person_id}"):
-        _LAST_WARNING[f"{group_uuid}:{person_id}"] = True
+    key = f"{group_uuid}:{person_id}"
+
+    # First call: warn and require explicit confirm word
+    if _PENDING_DELETES.get(key) is None:
+        _PENDING_DELETES[key] = True
         return {
             "status": "needs_confirmation",
             "message": DeletePersonFromLPGConfig.DOUBLE_CONFIRM_WARNING.format(
                 person_id=person_id, group_uuid=group_uuid
             )
-            + " Call again with user confirmation.",
+            + f" To proceed, call again with confirm_text='{_CONFIRM_WORD}'.",
         }
 
-    if not confirm:
+    # Second call: must match confirm word
+    if confirm_text != _CONFIRM_WORD:
         return {
-            "message": DeletePersonFromLPGConfig.DOUBLE_CONFIRM_WARNING.format(
-                person_id=person_id, group_uuid=group_uuid
-            )
+            "status": "confirmation_required",
+            "message": f"You must type confirm_text='{_CONFIRM_WORD}' to delete person {person_id} from group {group_uuid}.",
         }
+
+    # Passed confirmation → perform deletion
+    _PENDING_DELETES.pop(key, None)
+
     ENDPOINT = os.getenv("AZURE_FACE_ENDPOINT")
     KEY = os.getenv("AZURE_FACE_API_KEY")
     output_list = []
+
     with FaceAdministrationClient(
         endpoint=ENDPOINT,
         credential=AzureKeyCredential(KEY),
@@ -63,29 +75,37 @@ def delete_face_from_group(
     group_uuid: Annotated[
         str, Field(description=DeleteFaceFromLPGConfig.ARGS_GROUP_UUID)
     ],
-    confirm: Annotated[
-        bool, Field(description=DeleteFaceFromLPGConfig.ARGS_CONFIRM)
-    ] = False,
+    confirm_text: Annotated[
+        str, Field(description=f"Type exactly '{_CONFIRM_WORD}' to confirm deletion")
+    ] = "",
 ):
-    if not _LAST_WARNING.get(f"{group_uuid}:{person_id}:{face_id}"):
-        _LAST_WARNING[f"{group_uuid}:{person_id}:{face_id}"] = True
+    key = f"{group_uuid}:{person_id}:{face_id}"
+
+    # First call: warn and require explicit confirm word
+    if _PENDING_DELETES.get(key) is None:
+        _PENDING_DELETES[key] = True
         return {
             "status": "needs_confirmation",
             "message": DeleteFaceFromLPGConfig.DOUBLE_CONFIRM_WARNING.format(
                 face_id=face_id, person_id=person_id, group_uuid=group_uuid
             )
-            + " Call again with user confirmation.",
+            + f" To proceed, call again with confirm_text='{_CONFIRM_WORD}'.",
         }
 
-    if not confirm:
+    # Second call: must match confirm word
+    if confirm_text != _CONFIRM_WORD:
         return {
-            "message": DeleteFaceFromLPGConfig.DOUBLE_CONFIRM_WARNING.format(
-                face_id=face_id, person_id=person_id, group_uuid=group_uuid
-            )
+            "status": "confirmation_required",
+            "message": f"You must type confirm_text='{_CONFIRM_WORD}' to delete face {face_id} of person {person_id} in group {group_uuid}.",
         }
+
+    # Passed confirmation → perform deletion
+    _PENDING_DELETES.pop(key, None)
+
     ENDPOINT = os.getenv("AZURE_FACE_ENDPOINT")
     KEY = os.getenv("AZURE_FACE_API_KEY")
     output_list = []
+
     with FaceAdministrationClient(
         endpoint=ENDPOINT,
         credential=AzureKeyCredential(KEY),
