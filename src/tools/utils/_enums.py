@@ -47,17 +47,45 @@ class ListPersonsInLPGConfig(str, Enum):
 
 class DeletePersonFromLPGConfig(str, Enum):
     TOOL_NAME = "azure_face_recognition_delete_person"
-    TOOL_DESC = "Delete a person from a specific large person group leveraging the azure ai face recognition API."
+    TOOL_DESC = "Delete a person from a specific large person group leveraging the azure ai face recognition API. YOU (MCP) must double confirm with the user before proceeding with deletion, warning that this action is irreversible and all faces for the person will be permanently deleted."
     ARGS_PERSON_ID = "The ID of the person to delete."
     ARGS_GROUP_UUID = "The UUID of the person group from which to delete the person."
+    ARGS_CONFIRM = "Set to true to actually delete. Defaults to false for safety."
+    DOUBLE_CONFIRM_WARNING = (
+        "This will delete person (ID: {person_id}) from large person group (Group ID: {group_uuid}). "
+        "Double confirm by calling again to proceed."
+    )
 
 
 class DeleteFaceFromLPGConfig(str, Enum):
     TOOL_NAME = "azure_face_recognition_delete_face"
-    TOOL_DESC = "Delete a face from a specific person in a large person group leveraging the azure ai face recognition API."
+    TOOL_DESC = "Delete a face from a specific person in a large person group leveraging the azure ai face recognition API. YOU (MCP) must double confirm with the user before proceeding with deletion, warning that this action is irreversible and the face will be permanently deleted."
     ARGS_FACE_ID = "The persisted face ID of the face to delete."
     ARGS_PERSON_ID = "The ID of the person from which to delete the face."
     ARGS_GROUP_UUID = "The UUID of the person group from which to delete the face."
+    ARGS_CONFIRM = "Set to true to actually delete. Defaults to false for safety."
+    DOUBLE_CONFIRM_WARNING = (
+        "This will permanently delete the face (Face ID: {face_id}) from person (Person ID: {person_id}) in the large person group (Group ID: {group_uuid}). "
+        "Double confirm by calling again to proceed."
+    )
+
+
+class DeleteLPGConfig(str, Enum):
+    TOOL_NAME = "azure_face_recognition_delete_large_person_group"
+    TOOL_DESC = "Delete a large person group leveraging the azure ai face recognition API. YOU (MCP) must double confirm with the user before proceeding with deletion, warning that this action is irreversible and all persons and faces in the group will be permanently deleted."
+    ARGS_GROUP_UUID = "The UUID of the person group to delete."
+    ARGS_CONFIRM = "Set to true to actually delete. Defaults to false for safety."
+    DOUBLE_CONFIRM_WARNING = (
+        "This will delete the large person Group (Group ID: {group_uuid}). "
+        "Double confirm by calling again to proceed."
+    )
+
+
+class ListLPGConfig(str, Enum):
+    TOOL_NAME = "azure_face_recognition_list_large_person_groups"
+    TOOL_DESC = (
+        "List all large person groups leveraging the azure ai face recognition API."
+    )
 
 
 class OpensetFaceAttribConfig(str, Enum):
